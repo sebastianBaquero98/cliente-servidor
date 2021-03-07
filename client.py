@@ -13,7 +13,7 @@ tamañoArchivo  = 0
 nombreArchivo = ''
 bufferSize = 4096
 
-# Se crea un objeto socket s con dos parametros 
+# Se crea un objeto socket s con dos parametros (Quibo)
 # 1. socket.AF_INET que significa que es IPv4 
 # 2. socket.SOCK_STREAM que significa que sera sobre el protocolo TCP 
 s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
