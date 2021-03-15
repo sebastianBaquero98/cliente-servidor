@@ -1,0 +1,1 @@
+INFO:server:13:57:11-[STARTING] Logs initialized for client

@@ -23,10 +23,13 @@ class logger:
         Args:
         msg (str): Message to log
         """
-        now = datetime.now()
-        logs_hour = now.strftime("%H:%M:%S")
-        msg = f"{logs_hour}-{msg}"
-        self.logger.info(msg)
+        if not msg=="":
+            now = datetime.now()
+            logs_hour = now.strftime("%H:%M:%S")
+            msg = f"{logs_hour}-{msg}"
+            self.logger.info(msg)
+        else:
+            pass
 
     def log_warning(self,msg: str):
         """ Functión to Log an warning message in logs file

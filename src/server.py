@@ -25,18 +25,19 @@ class server():
         assert 1 <= file <= 3, "El archivo no es el indicado"
 
         # Server class constant
-        self.HEADER = 1024
+        self.HEADER = 2**20
         self.PORT = 5050
         self.ADDR = (socket.gethostbyname(socket.gethostname()), self.PORT)
         self.FORMAT = "latin-1"
-        self.DISCONECT_MSG = "DISCONNECT"
-        self.READY_MSG = "READY"
-        self.STAND_BY_MSG = "STAND BY"
-        self.SEND = "SEND"
+        self.HELLO = "HELLO"
+        self.CONFIRM = "CONFIRM"
+        self.GOODBYE = "GOODBYE"
         self.MIN_CON = min_con
         self.PATHS = ["./testFiles/100MBFile.txt","./testFiles/250MBFile.txt","./testFiles/SmallTestFile.txt"]
         self.HASH = hashlib.md5()
-
+        self.SEMAPHORE = threading.Semaphore()
+        self.EVENT = threading.Event()
+        
         # Logger setup
         self.logger = logger('server')
         self.logger.log_info('[STARTING] Logs initialized')
@@ -66,18 +67,14 @@ class server():
         try:
             # Logea la nueva conexión
             self.logger.log_info(f"[NEW CONNECTION] {addr} connected")
-            self.connected = True
-            while self.connected:
-                self.sendall(conn,addr)
-                self.connected = self.listen(conn,addr)
-                
-
-
-        # Si ocurre un error critico que acabe els erver
+            self.listen(conn,addr)
+            self.sendall(conn,addr)
+            conn.close()
         except Exception as ex:
-            pass
             self.logger.log_critical(ex)
             raise ex
+            sys.exit(1)
+
 
     def start(self):
         try:
@@ -91,104 +88,97 @@ class server():
 
             # Siempre y cuando se este escuchando
             while self.connected:
-
+                
                 # Acepta la conexión
                 conn, addr = self.server.accept()
                 self.logger.log_info(f"[CONNECTED] Connection stablished with {addr}")
                 self.clients.append((conn,addr))
+
                 # Se crea un thread para manejar los clientes
                 thread = threading.Thread(
                     target=self.handle_client, args=(conn, addr))
                 thread.start()
 
                 # Se logea la nueva conexión
-                self.logger.log_info(msg = f"[ACTIVE CONNECTIONS] {len(self.clients)}" )
             self.logger.log_critical("[SHUTDOWN] Server is on shutdown")
         except Exception as ex:
             self.logger.log_critical(ex)
             raise ex
+            sys.exit(1)
 
 
-    def sendall(self,conn:socket,addr:tuple):
-        """Función para mandar un mensaje a los clientes
+    def sendall(self,conn:socket,addr:tuple)->bool:
+        """Función que hace el envio de mensajes
+
+        Args:
+            conn (socket): [description]
+            addr (tuple): [description]
         """
         self.logger.log_info(f"[MESSAGE] Server is trying to send message to {addr}")
-        # Si se tiene menos de las conexiones requeridas
-        if len(self.clients) < self.MIN_CON:   
-        # Se manda un mensaje al cliente de que permanesca en stand by
-            conn.sendall(bytes(self.STAND_BY_MSG,self.FORMAT))
-            self.logger.log_info(
-                f"[MESSAGE] Please client {addr} Stand by for minimun required clients")
+        
+            
+        with self.file as f: #Con conn y el file
+            data = f.read(self.HEADER) #Se lee el primer pedazo
+            packetNumber = 1
+            while data: #Siempre que la variablee no sea nula
+                try:
+                    self.logger.log_info(f"[MESSAGE] Packet {packetNumber} is being send {addr}")
+                    conn.sendall(data)  #Se envia  
+                    msgRecv = conn.recv(self.HEADER).decode(self.FORMAT)
+                    if msgRecv and msgRecv==self.CONFIRM:  #Si confirma el mensaje, se cambia
+                        self.logger.log_info(f"[MESSAGE] Packet {packetNumber} arrived to {addr}")
+                        data = f.read(self.HEADER)
+                        packetNumber+=1
+                except Exception as ex:
+                    self.logger.log_critical(ex)    #Se logea el timeout
+                    raise ex
 
-                # Esta listo para enviar
-        else:
-            # Se cambian las conexiones activas a listo
-            conn.sendall(bytes(self.READY_MSG,self.FORMAT))
-            self.logger.log_info(f"[MESSAGE] Client {addr} change state to ready")
-                    
-                
+        msgRecv = conn.recv(self.HEADER).decode(self.FORMAT)
+        if msgRecv and msgRecv==self.GOODBYE:
+            self.logger.log_info(f"[MESSAGE] Client {addr} recived file. Close connection now")
+            self.clients.remove((conn,addr))
+            conn.close()
+        
+        if len(self.clients)==0:
+            self.send=True
 
     def listen(self,conn:socket,addr:tuple):
-        self.logger.log_info(f"[LISTENING] Server is trying to retrive message from {addr}")
+        """Función que escucha los mensajes que envia el thread.
+            Es el encargado de manejar la sincronización de los clientes
+
+        Args:
+            conn (socket): Socket de conexión
+            addr (tuple): Dirección de conexión
+
+        Returns:
+            msg (str): Ultimo mensaje enviado por addr
+        Raises:
+            ex: Excepción que dañe todo
+        """
         try:
-            self.connected = True
-            # Obtinene el header del mensaje. Si el cliente envia un mensaje
-            msg_lenght = conn.recv(self.HEADER).decode(self.FORMAT)
-            # Si existe el mensaje (Si se envio)
-            if msg_lenght:
-                 # Mensaje
-                msg = msg_lenght
+            #Obtiene el mensaje
+            self.logger.log_info(f"[MESSAGE] Listening for message of {addr}")
+            msg = conn.recv(self.HEADER).decode(self.FORMAT)
 
-                # Si es de deconexción
-                if msg == self.DISCONECT_MSG:
-                    connected = False  # Cambia el estado
-                    # Se remueve la conexión del listado de conexiones
-                    self.clients.remove((conn,addr))
-                    self.logger.log_info(
-                        f"[{self.DISCONECT_MSG}] Client with address {addr} disconnected")  # Se logea la info
-                    conn.close()
-                    self.connected=False
-                    self.clients.remove((conn,addr))
-
-                elif msg == self.STAND_BY_MSG:
-                    self.logger.log_info(
-                    f"[{self.STAND_BY_MSG}] Client with address {addr} is on stand by")  # Se logea la info
-
-                elif msg == self.READY_MSG:
-                    self.logger.log_info(
-                                f"[{self.READY_MSG}] Client with address {addr} is ready")  # Se logea la info
-
-                    filename = os.path.basename(self.PATHS[self.fileIndex])
-                    filesize = os.path.getsize(self.PATHS[self.fileIndex])
-                    self.logger.log_info(f"[MESSAGE] Client {addr} will recive file {file_name} with size {filesize}")
-                    #self.logger.log_info(f"[MESSAGE] Client {client[1]} will recive hash of file")
-
-                    data = self.file.read(self.HEADER)
-
-                    """ ANTES DE ENVIAR EL TEXTO
-                        ES NECESARIO PRIMERO CONFIRMAR QUE EL CLIENTE ESTE LISTO
-                        SE TIENE QUE ENVIAR UN MENSAJE DESDE EL CLIENTE
-                        INDICANDO QUE LA TRANSFERENCIA PUEDE COMENZAR
-                        Y DESPUES PONER EL CLIENTE A ESCUCHAR
-                        Y EL SERVIDOR A ENVIAR
-                    """
-
-                    while data:
-                        print(data)
-                        conn.sendall(data)
-                        data = self.file.read(self.HEADER)
-
-                    self.file.close()
-                    # Se acaba la conexion
-                    self.logger.log_info(f"[MESSAGE] Client {addr} will recived file {file_name} with size {filesize}")
-
-                    
-
+            if msg:
+                #Handshake inicial
+                if msg == self.HELLO:
+                    self.logger.log_info(f"[MESSAGE] Hello Message of {addr}")
+                    self.synch()    #A mimir
         except Exception as ex:
             self.logger.log_critical(ex)
             raise ex
         
 
+    def synch(self):
+        """Metodo para sincronizar los clientes con un semaforo
+        """
+        with self.SEMAPHORE:
+            self.logger.log_info(f"[CONNECTION] {len(self.clients)} Clients ready")
+            if len(self.clients)==self.MIN_CON:
+                self.EVENT.set()
+            else: 
+                self.EVENT.wait()
 
 if __name__ == '__main__':
     min_con,file_name = int(sys.argv[1]),int(sys.argv[2])

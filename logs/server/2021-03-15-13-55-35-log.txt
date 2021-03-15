@@ -1,0 +1,13 @@
+INFO:server:13:55:35-[STARTING] Logs initialized
+INFO:server:13:55:35-[STARTING] Server is starting...
+INFO:server:13:55:35-[STARTING] Server is listening...
+INFO:server:13:55:35-[LISTENING] Server is listening on 192.168.1.13
+INFO:server:13:55:38-[CONNECTED] Connection stablished with ('192.168.1.13', 60286)
+INFO:server:13:55:38-[NEW CONNECTION] ('192.168.1.13', 60286) connected
+INFO:server:13:55:38-[MESSAGE] Listening for message of ('192.168.1.13', 60286)
+INFO:server:13:55:38-[MESSAGE] Hello Message of ('192.168.1.13', 60286)
+INFO:server:13:55:38-[CONNECTION] 1 Clients ready
+INFO:server:13:55:38-[MESSAGE] Server is trying to send message to ('192.168.1.13', 60286)
+INFO:server:13:55:38-[MESSAGE] Packet 1 is being send ('192.168.1.13', 60286)
+INFO:server:13:55:38-[MESSAGE] Packet 1 arrived to ('192.168.1.13', 60286)
+INFO:server:13:55:38-[MESSAGE] Client ('192.168.1.13', 60286) recived file. Close connection now

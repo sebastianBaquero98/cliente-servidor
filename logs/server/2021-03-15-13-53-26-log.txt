@@ -1,0 +1,14 @@
+INFO:server:13:53:26-[STARTING] Logs initialized
+INFO:server:13:53:26-[STARTING] Server is starting...
+INFO:server:13:53:26-[STARTING] Server is listening...
+INFO:server:13:53:26-[LISTENING] Server is listening on 192.168.1.13
+INFO:server:13:53:28-[CONNECTED] Connection stablished with ('192.168.1.13', 60202)
+INFO:server:13:53:28-[NEW CONNECTION] ('192.168.1.13', 60202) connected
+INFO:server:13:53:28-[MESSAGE] Listening for message of ('192.168.1.13', 60202)
+INFO:server:13:53:28-[MESSAGE] Hello Message of ('192.168.1.13', 60202)
+INFO:server:13:53:28-[CONNECTION] 1 Clients ready
+INFO:server:13:53:28-[MESSAGE] Server is trying to send message to ('192.168.1.13', 60202)
+INFO:server:13:53:28-[MESSAGE] Packet 1 is being send ('192.168.1.13', 60202)
+INFO:server:13:53:28-[MESSAGE] Packet 1 is being send ('192.168.1.13', 60202)
+CRITICAL:server:13:53:28-[WinError 10053] Se ha anulado una conexión establecida por el software en su equipo host
+CRITICAL:server:13:53:29-[WinError 10053] Se ha anulado una conexión establecida por el software en su equipo host
