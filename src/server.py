@@ -35,8 +35,7 @@ class server():
         self.MIN_CON = min_con
         self.PATHS = ["./testFiles/100MBFile.txt","./testFiles/250MBFile.txt","./testFiles/SmallTestFile.txt"]
         self.HASH = hashlib.md5()
-        self.SEMAPHORE = threading.Semaphore()
-        self.EVENT = threading.Event()
+        self.LOCK = threading.Lock()
         
         # Logger setup
         self.logger = logger('server')
@@ -57,7 +56,7 @@ class server():
 
 
 
-    def handle_client(self, conn:socket, addr:tuple):
+    def handle_client(self, conn:socket, addr:tuple,event:threading.Event):
         """Función que maneja las nuevas conexiones con el cliente
 
         Args:
@@ -67,7 +66,7 @@ class server():
         try:
             # Logea la nueva conexión
             self.logger.log_info(f"[NEW CONNECTION] {addr} connected")
-            self.listen(conn,addr)
+            self.listen(conn,addr,event)
             self.sendall(conn,addr)
             conn.close()
         except Exception as ex:
@@ -85,22 +84,24 @@ class server():
             self.server.listen()
             self.logger.log_info(
                 f"[LISTENING] Server is listening on {self.ADDR[0]}")
-
+            synchEvent = threading.Event()
             # Siempre y cuando se este escuchando
             while self.connected:
-                
-                # Acepta la conexión
-                conn, addr = self.server.accept()
-                self.logger.log_info(f"[CONNECTED] Connection stablished with {addr}")
-                self.clients.append((conn,addr))
+                if len(self.clients)<self.MIN_CON:
+                    # Acepta la conexión
+                    conn, addr = self.server.accept()
+                    self.logger.log_info(f"[CONNECTED] Connection stablished with {addr}")
+                    self.clients.append((conn,addr))
 
-                # Se crea un thread para manejar los clientes
-                thread = threading.Thread(
-                    target=self.handle_client, args=(conn, addr))
-                thread.start()
-
+                    # Se crea un thread para manejar los clientes
+                    thread = threading.Thread(
+                        target=self.handle_client, args=(conn,addr,synchEvent))
+                    thread.start()
+                else:
+                    self.connected=False
                 # Se logea la nueva conexión
             self.logger.log_critical("[SHUTDOWN] Server is on shutdown")
+            self.file.close()
         except Exception as ex:
             self.logger.log_critical(ex)
             raise ex
@@ -117,32 +118,31 @@ class server():
         self.logger.log_info(f"[MESSAGE] Server is trying to send message to {addr}")
         
             
-        with self.file as f: #Con conn y el file
-            data = f.read(self.HEADER) #Se lee el primer pedazo
-            packetNumber = 1
-            while data: #Siempre que la variablee no sea nula
-                try:
-                    self.logger.log_info(f"[MESSAGE] Packet {packetNumber} is being send {addr}")
-                    conn.sendall(data)  #Se envia  
-                    msgRecv = conn.recv(self.HEADER).decode(self.FORMAT)
-                    if msgRecv and msgRecv==self.CONFIRM:  #Si confirma el mensaje, se cambia
-                        self.logger.log_info(f"[MESSAGE] Packet {packetNumber} arrived to {addr}")
-                        data = f.read(self.HEADER)
-                        packetNumber+=1
-                except Exception as ex:
-                    self.logger.log_critical(ex)    #Se logea el timeout
-                    raise ex
-
+        f = self.file #Con conn y el file
+        data = f.read(self.HEADER) #Se lee el primer pedazo
+        packetNumber = 1
+        while data: #Siempre que la variablee no sea nula
+            try:
+                self.logger.log_info(f"[MESSAGE] Packet {packetNumber} is being send {addr}")
+                conn.sendall(data)  #Se envia  
+                msgRecv = conn.recv(self.HEADER).decode(self.FORMAT)
+                if msgRecv and msgRecv==self.CONFIRM:  #Si confirma el mensaje, se cambia
+                    self.logger.log_info(f"[MESSAGE] Packet {packetNumber} arrived to {addr}")
+                    data = f.read(self.HEADER)
+                    packetNumber+=1
+            except Exception as ex:
+                self.logger.log_critical(ex)    #Se logea el timeout
+                raise ex
         msgRecv = conn.recv(self.HEADER).decode(self.FORMAT)
         if msgRecv and msgRecv==self.GOODBYE:
             self.logger.log_info(f"[MESSAGE] Client {addr} recived file. Close connection now")
             self.clients.remove((conn,addr))
             conn.close()
-        
+    
         if len(self.clients)==0:
             self.send=True
 
-    def listen(self,conn:socket,addr:tuple):
+    def listen(self,conn:socket,addr:tuple,event:threading.Event):
         """Función que escucha los mensajes que envia el thread.
             Es el encargado de manejar la sincronización de los clientes
 
@@ -164,21 +164,24 @@ class server():
                 #Handshake inicial
                 if msg == self.HELLO:
                     self.logger.log_info(f"[MESSAGE] Hello Message of {addr}")
-                    self.synch()    #A mimir
+                    print('Before all')
+                    self.synch(event)    #A mimir
         except Exception as ex:
             self.logger.log_critical(ex)
             raise ex
         
 
-    def synch(self):
+    def synch(self,event:threading.Event):
         """Metodo para sincronizar los clientes con un semaforo
         """
-        with self.SEMAPHORE:
+        aux = True
+        with self.LOCK:
             self.logger.log_info(f"[CONNECTION] {len(self.clients)} Clients ready")
             if len(self.clients)==self.MIN_CON:
-                self.EVENT.set()
-            else: 
-                self.EVENT.wait()
+                event.set()
+                aux=False
+        if aux:
+            event.wait()
 
 if __name__ == '__main__':
     min_con,file_name = int(sys.argv[1]),int(sys.argv[2])

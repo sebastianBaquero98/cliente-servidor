@@ -1,2 +1,0 @@
-INFO:server:13:54:18-[STARTING] Logs initialized for client
-CRITICAL:server:13:54:20-[WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión
