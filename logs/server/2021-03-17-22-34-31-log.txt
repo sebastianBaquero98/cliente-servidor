@@ -1,0 +1,19 @@
+INFO:server:22:34:31-[STARTING] Logs initialized
+INFO:server:22:34:31-[STARTING] Server is starting...
+INFO:server:22:34:31-[STARTING] Server is listening...
+INFO:server:22:34:31-[LISTENING] Server is listening on 192.168.1.14
+INFO:server:22:34:42-[CONNECTED] Connection stablished with ('192.168.1.14', 55352)
+INFO:server:22:34:42-[NEW CONNECTION] ('192.168.1.14', 55352) connected
+INFO:server:22:34:42-[CONNECTION] 1 Clients ready
+INFO:server:22:34:42-[MESSAGE] File details has been sent to ('192.168.1.14', 55352)
+INFO:server:22:34:42-[MESSAGE] Hash File has been sent to ('192.168.1.14', 55352)
+INFO:server:22:34:42-[MESSAGE] File is been send to ('192.168.1.14', 55352)
+ERROR:server:22:34:42-[MESSAGE] Error while sending file to ('192.168.1.14', 55352)
+INFO:server:22:34:42-[CONNECTION] ('192.168.1.14', 55352) connection closed
+INFO:server:22:35:13-[CONNECTED] Connection stablished with ('192.168.1.14', 55495)
+INFO:server:22:35:13-[NEW CONNECTION] ('192.168.1.14', 55495) connected
+INFO:server:22:35:13-[CONNECTION] 2 Clients ready
+INFO:server:22:35:13-[MESSAGE] File details has been sent to ('192.168.1.14', 55495)
+INFO:server:22:35:13-[MESSAGE] Hash File has been sent to ('192.168.1.14', 55495)
+INFO:server:22:35:13-[MESSAGE] File is been send to ('192.168.1.14', 55495)
+CRITICAL:server:22:35:13-string argument without an encoding

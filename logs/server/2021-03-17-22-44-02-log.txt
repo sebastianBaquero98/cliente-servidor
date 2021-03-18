@@ -1,0 +1,28 @@
+INFO:server:22:44:02-[STARTING] Logs initialized
+INFO:server:22:44:02-[STARTING] Server is starting...
+INFO:server:22:44:02-[STARTING] Server is listening...
+INFO:server:22:44:02-[LISTENING] Server is listening on 192.168.1.14
+INFO:server:22:44:07-[CONNECTED] Connection stablished with ('192.168.1.14', 56162)
+INFO:server:22:44:07-[NEW CONNECTION] ('192.168.1.14', 56162) connected
+INFO:server:22:44:07-[CONNECTION] 1 Clients ready
+INFO:server:22:44:10-[CONNECTED] Connection stablished with ('192.168.1.14', 56165)
+INFO:server:22:44:10-[NEW CONNECTION] ('192.168.1.14', 56165) connected
+INFO:server:22:44:10-[CONNECTION] 2 Clients ready
+INFO:server:22:44:15-[CONNECTED] Connection stablished with ('192.168.1.14', 56168)
+INFO:server:22:44:15-[NEW CONNECTION] ('192.168.1.14', 56168) connected
+INFO:server:22:44:15-[CONNECTION] 3 Clients ready
+INFO:server:22:44:15-[MESSAGE] File details has been sent to ('192.168.1.14', 56168)
+INFO:server:22:44:15-[MESSAGE] File details has been sent to ('192.168.1.14', 56162)
+INFO:server:22:44:15-[MESSAGE] File details has been sent to ('192.168.1.14', 56165)
+INFO:server:22:44:15-[MESSAGE] Hash File has been sent to ('192.168.1.14', 56162)
+INFO:server:22:44:15-[MESSAGE] Hash File has been sent to ('192.168.1.14', 56168)
+INFO:server:22:44:15-[MESSAGE] Hash File has been sent to ('192.168.1.14', 56165)
+INFO:server:22:44:15-[MESSAGE] File is been send to ('192.168.1.14', 56168)
+INFO:server:22:44:15-[MESSAGE] File is been send to ('192.168.1.14', 56165)
+INFO:server:22:44:15-[MESSAGE] File is been send to ('192.168.1.14', 56162)
+INFO:server:22:44:15-[MESSAGE] File has been send to ('192.168.1.14', 56165) in 0.03690147399902344 seconds
+INFO:server:22:44:15-[MESSAGE] File has been send to ('192.168.1.14', 56168) in 0.03690147399902344 seconds
+INFO:server:22:44:15-[CONNECTION] ('192.168.1.14', 56165) connection closed
+INFO:server:22:44:15-[CONNECTION] ('192.168.1.14', 56168) connection closed
+INFO:server:22:44:15-[MESSAGE] File has been send to ('192.168.1.14', 56162) in 0.03789854049682617 seconds
+INFO:server:22:44:15-[CONNECTION] ('192.168.1.14', 56162) connection closed
