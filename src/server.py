@@ -27,8 +27,8 @@ class server():
 
         # Server class constant
         self.HEADER = 2**20
-        self.PORT = 5050
-        self.ADDR = (socket.gethostbyname(socket.gethostname()), self.PORT)
+        self.PORT =33364
+        self.ADDR = (socket.gethostbyname(socket.gethostname()+".local"), self.PORT)
         self.HELLO = "HELLO"
         self.CONFIRM = "CONFIRM"
         self.GOODBYE = "GOODBYE"
