@@ -47,16 +47,14 @@ class client():
                 progress = 0
                 length = fileSize
                 pbar = tqdm(total=100,initial=progress)
-                packet = min(fileSize,self.HEADER)
-                data = serverFile.read(int(packet))
-                while length>0:
+                while length:
+                    packet = min(fileSize,self.HEADER)
+                    data = serverFile.read(int(packet))
                     length-=len(data)
                     progress = round((fileSize-length)/fileSize*100,0)
                     f.write(data)
                     pbar.update(progress)
-                    if length>0:
-                        packet = min(length,self.HEADER)
-                        data += serverFile.read(int(packet)).strip()
+                    if not data: break
                 
             pbar.close()
             if length==0:

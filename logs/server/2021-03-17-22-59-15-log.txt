@@ -1,0 +1,12 @@
+INFO:server:22:59:15-[STARTING] Logs initialized
+INFO:server:22:59:15-[STARTING] Server is starting...
+INFO:server:22:59:15-[STARTING] Server is listening...
+INFO:server:22:59:15-[LISTENING] Server is listening on 192.168.1.14
+INFO:server:22:59:19-[CONNECTED] Connection stablished with ('192.168.1.14', 57408)
+INFO:server:22:59:19-[NEW CONNECTION] ('192.168.1.14', 57408) connected
+INFO:server:22:59:19-[CONNECTION] 1 Clients ready
+INFO:server:22:59:19-[MESSAGE] File details has been sent to ('192.168.1.14', 57408)
+INFO:server:22:59:19-[MESSAGE] Hash File has been sent to ('192.168.1.14', 57408)
+INFO:server:22:59:19-[MESSAGE] File is been send to ('192.168.1.14', 57408)
+INFO:server:22:59:19-[MESSAGE] File has been send to ('192.168.1.14', 57408) in 0.31363940238952637 seconds
+INFO:server:22:59:19-[CONNECTION] ('192.168.1.14', 57408) connection closed

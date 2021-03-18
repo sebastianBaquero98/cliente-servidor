@@ -1,0 +1,6 @@
+INFO:server:22:59:19-[STARTING] Logs initialized for client
+INFO:server:22:59:19-[MESSAGE] File size arrived 104857600.0
+INFO:server:22:59:19-[MESSAGE] Hash digest arrived
+INFO:server:22:59:19-[MESSAGE] File transfer will begin
+INFO:server:22:59:19-[MESSAGE] File transfer complete. Checking integrity
+CRITICAL:server:22:59:19-[MESSAGE] File transfer complete. Integrity correct

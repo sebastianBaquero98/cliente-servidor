@@ -13,7 +13,7 @@ class logger:
         time = now.strftime("%Y-%m-%d-%H-%M-%S")
         
         logs_filename = f"logs/{handler}/{time}-log.txt"
-        handle="server"
+        handle=handler
         logging.basicConfig(filename=logs_filename,filemode="w",level=logging.NOTSET)
         self.logger = logging.getLogger(handle)
 

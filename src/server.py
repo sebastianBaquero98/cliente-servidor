@@ -33,7 +33,7 @@ class server():
         self.CONFIRM = "CONFIRM"
         self.GOODBYE = "GOODBYE"
         self.MIN_CON = min_con
-        self.PATHS = ["./testFiles/100MBFile.txt","./testFiles/250MBFile.txt","./testFiles/SmallTestFile.txt"]
+        self.PATHS = ["./testFiles/100MBFile.bin","./testFiles/250MBFile.bin","./testFiles/SmallTestFile.txt"]
         self.LOCK = threading.Lock()
         
         # Logger setup
