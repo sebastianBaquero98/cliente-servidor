@@ -21,17 +21,13 @@
   pip install tqdm
   ```
 ---
-## How to Run:
+## How to Run Server on Windowns:
 1. Locate yourself at root folder
-2. Move to testFile folder 
-   ```
-   cd testFiles
-   ```
-3. Execute downloadFiles.sh for downloading the test files
-   ```
-   ./downloadFiles.sh
-   ```
-5. Start server with the following command. 
+2. For server files, download files from this links and put in testFile folder
+   - [100MBFile.bin](https://www.dropbox.com/s/gqo5v7kblsop98s/100MBFile.bin)
+   - [250MBFile.bin](https://www.dropbox.com/s/tbs0p9zpmyeuihd/250MBFile.bin)
+
+3. Start server with the following command. 
     - The first parameter is the # of minimum clients to start the file transfer. 
     - The second paramenter is the file to be sended:
         - 1 = 100MB
@@ -40,7 +36,9 @@
    ```
    python src/server.py [numberOfMinimumClients] [File]
    ```
-4. Start the needed clients in another command window from root folder
-   ```
-   python src/client.py [id]
+
+## How to Rin Client on Windows
+Start the needed clients in another command window from root folder
+```
+python src/client.py [id]
    ```
