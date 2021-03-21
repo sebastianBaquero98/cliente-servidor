@@ -27,8 +27,8 @@ class server():
 
         # Server class constant
         self.HEADER = 2**20
-        self.PORT =33364
-        self.ADDR = (socket.gethostbyname(socket.gethostname()+".local"), self.PORT)
+        self.PORT = 5050
+        self.ADDR = (socket.gethostbyname(socket.gethostname()), self.PORT)
         self.HELLO = "HELLO"
         self.CONFIRM = "CONFIRM"
         self.GOODBYE = "GOODBYE"
@@ -125,7 +125,10 @@ class server():
                 self.synch(event)
                 with open(self.PATHS[self.fileIndex],'rb') as f:
                     fileSize = f"{self.getSyzeInMB()}"
-                    self.logger.log_info(f"[MESSAGE] File details has been sent to {addr}")
+                    fileName = f"{self.PATHS[self.fileIndex].split('/')[-1]}"
+                    self.logger.log_info(f"[MESSAGE] File to be send is: {fileName}")
+                    self.logger.log_info(f"[MESSAGE] File size is of {fileSize}")
+                    conn.sendall(fileName.encode()+b'\n')
                     conn.sendall(fileSize.encode()+b'\n')
                     conn.sendall(self.PATHS[self.fileIndex].split(".")[-1].encode()+b'\n')
                     conn.sendall(self.getHashFile().encode()+b'\n',)
@@ -133,9 +136,12 @@ class server():
                     init_time = time.time()
                     data = f.read(self.HEADER)
                     self.logger.log_info(f"[MESSAGE] File is been send to {addr}")
+                    paquetes=1
                     while data:
                         conn.sendall(data)
                         data = f.read(self.HEADER)
+                        paquetes+=1
+                    self.logger.log_info(f"[MESSAGE] File is has been sent to {addr} in {paquetes} packets")
                 msgRcv = conn.recv(self.HEADER).decode()
                 if msgRcv and msgRcv==self.CONFIRM:
                     conn.sendall(str(init_time).encode())

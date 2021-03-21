@@ -34,15 +34,18 @@ class client():
         self.client.sendall(self.HELLO.encode())
         fail=False
         with self.client,self.client.makefile('rb') as serverFile:
+            fileName = serverFile.readline().strip().decode()
             fileSize = float(serverFile.readline().strip().decode())*self.HEADER
             fileExtension = serverFile.readline().strip().decode()
+            self.logger.log_info(f'[MESSAGE] File name arrived {fileName}')
             self.logger.log_info(f'[MESSAGE] File size arrived {fileSize}')
             hashFile = serverFile.readline().strip().decode()
             self.logger.log_info(f'[MESSAGE] Hash digest arrived')
             self.logger.log_info(f'[MESSAGE] File transfer will begin')
             currentFileTransfer = fileSize
             length=0
-            self.route = f'./recivedFiles/{self.name}-Prueba{self.prueba}.{fileExtension}'
+            paquetes=1
+            self.route = f'./recivedFiles/{self.name}-Prueba-{self.prueba}.{fileExtension}'
             with open(self.route,'wb') as f:
                 progress = 0
                 length = fileSize
@@ -54,6 +57,7 @@ class client():
                     progress = round((fileSize-length)/fileSize*100,0)
                     f.write(data)
                     pbar.update(progress)
+                    paquetes+=1
                     if not data: break
                 
             pbar.close()
@@ -62,10 +66,12 @@ class client():
                 localHash = self.getHashFile()
                 if localHash==hashFile:                  
                     self.logger.log_critical(f'[MESSAGE] File transfer complete. Integrity correct')
+                    self.logger.log_critical(f'[MESSAGE] File arrived in {paquetes} packets')
                     end_time = time.time()
                     self.client.sendall(self.CONFIRM.encode(),)
                     init_time = float(self.client.recv(self.HEADER).decode())
                     self.client.sendall(str(end_time).encode())
+                    self.logger.log_info(f"[MESSAGE] File has arrived in {end_time-init_time} seconds")
                 else:
                     self.logger.log_critical(f'[MESSAGE] File transfer complete. Integrity fail')
                     fail=True
@@ -84,6 +90,7 @@ class client():
         try:
             #Conexion al servidor
             self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            print(self.ADDR)
             self.client.connect(self.ADDR)
 
         except Exception as ex:
